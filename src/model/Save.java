@@ -6,10 +6,12 @@ public class Save {
 
     private LocalDateTime time;
     private String name;
+    private Character character;
 
-    public Save(LocalDateTime time, String name) {
+    public Save(LocalDateTime time, String name, Character character) {
         this.time = time;
         this.name = name;
+        this.character = character;
     }
 
     public LocalDateTime getTime() {
@@ -26,5 +28,13 @@ public class Save {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Character getCharacter() {
+        return character;
+    }
+
+    public void setCharacter(Character character) {
+        this.character = character;
     }
 }

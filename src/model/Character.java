@@ -4,15 +4,26 @@ public class Character {
 
     private String name;
     private double height;
+    private int sex;
     private int gameClass; //1) Warrior; 2) Mage;
     private Inventory inventory;
     private int experience;
 
-    public Character(String name, double height, int gameClass, int experience) {
+
+    public Character(String name, double height, int sex, int gameClass, int experience) {
         this.name = name;
         this.height = height;
+        this.sex = sex;
         this.gameClass = gameClass;
         this.experience = experience;
+    }
+
+    public int getSex() {
+        return sex;
+    }
+
+    public void setSex(int sex) {
+        this.sex = sex;
     }
 
     public String getName() {
@@ -54,4 +65,5 @@ public class Character {
     public void setExperience(int experience) {
         this.experience = experience;
     }
+
 }

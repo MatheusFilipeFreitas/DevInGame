@@ -1,10 +1,13 @@
 package views;
 
-import controller.CharacterController;
 import controller.InventoryController;
 import controller.SaveController;
 import function.MenusFunction;
 import model.Character;
+import model.Inventory;
+import model.Save;
+
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -17,10 +20,8 @@ public class Menus {
     Scanner inputString = new Scanner(System.in);
     Scanner inputDouble = new Scanner(System.in);
 
-    Game game = new Game();
-    SaveController saveController = new SaveController();
     InventoryController inventoryController = new InventoryController();
-    CharacterController characterController = new CharacterController();
+    SaveController saveController = new SaveController();
     MenusFunction menusFunction = new MenusFunction();
 
     public void mainMenu(){
@@ -67,6 +68,9 @@ public class Menus {
     }
 
     public void startGameMenu(){
+
+        Save saveGame;
+
         menusFunction.space(UP_SPACE);
         System.out.println("|------------------------------------|");
         System.out.println("|           DEV IN GAME              |");
@@ -95,18 +99,31 @@ public class Menus {
         System.out.println("|------------------------------------|");
         System.out.println("|           DEV IN GAME              |");
         System.out.println("|------------------------------------|");
+        System.out.println("| Choose your character sex:         |");
+        System.out.println("|                                    |");
+        System.out.println("|      1)Male         2)Female       |");
+        System.out.println("|------------------------------------|");
+        System.out.println("<Your option is:>");
+        int characterSex = inputDouble.nextInt();
+        if(characterSex == 0 || characterSex > 2 || characterSex < 0){
+            errorMenu("Invalid Height!");
+        }
+        menusFunction.space(UP_SPACE);
+        System.out.println("|------------------------------------|");
+        System.out.println("|           DEV IN GAME              |");
+        System.out.println("|------------------------------------|");
         System.out.println("| Choose your game class:            |");
         System.out.println("|                                    |");
-        System.out.println("| 1) Warrior          2)Mage         |");
+        System.out.println("|   1)Warrior           2)Mage       |");
         System.out.println("|                                    |");
         System.out.println("|------------------------------------|");
         System.out.println("<Your option is:>");
         int characterClass = input.nextInt();
+
         if(characterClass != 1 && characterClass != 2){
             errorMenu("Invalid Option!");
         }
         switch (characterClass){
-
             case 1:
                 menusFunction.space(UP_SPACE);
                 System.out.println("|------------------------------------|");
@@ -114,22 +131,41 @@ public class Menus {
                 System.out.println("|------------------------------------|");
                 System.out.println("| Choose your primary weapon:        |");
                 System.out.println("|                                    |");
-                System.out.println("| 1) Wooden club     2)Stone club    |");
+                System.out.println("| 1)Wooden club      2)Stone club    |");
                 System.out.println("|                                    |");
                 System.out.println("|------------------------------------|");
                 System.out.println("<Your option is:>");
                 int weaponCharacter = input.nextInt();
-                if(weaponCharacter == 1){
-                   Character character = new Character(characterName, characterHeight, characterClass, 0);
-                    characterController.createCharacter(character);
-                    game.gameNewStart(character, weaponCharacter, characterClass);
-                }else if(weaponCharacter == 2){
-                    Character character = new Character(characterName, characterHeight, characterClass, 0);
-                    characterController.createCharacter(character);
-                    game.gameNewStart(character, weaponCharacter, characterClass);
+                if(weaponCharacter == 1 || weaponCharacter == 2){
+                    Character character = new Character(characterName, characterHeight, characterSex, characterClass, 0);
+                    gameLevel(character, weaponCharacter);
                 }else{
                     errorMenu("Invalid Option!");
                 }
+                break;
+
+            case 2:
+                menusFunction.space(UP_SPACE);
+                System.out.println("|------------------------------------|");
+                System.out.println("|           DEV IN GAME              |");
+                System.out.println("|------------------------------------|");
+                System.out.println("| Choose your primary magic weapon:  |");
+                System.out.println("|                                    |");
+                System.out.println("| 1)Magic Stick      2)Magic Book    |");
+                System.out.println("|                                    |");
+                System.out.println("|------------------------------------|");
+                System.out.println("<Your option is:>");
+                int magicWeaponCharacter = input.nextInt();
+                if(magicWeaponCharacter == 1 || magicWeaponCharacter == 2){
+                    Character character = new Character(characterName, characterHeight, characterSex, characterClass, 0);
+                    gameLevel(character, magicWeaponCharacter);
+                }else{
+                    errorMenu("Invalid Option!");
+                }
+                break;
+
+            default:
+                errorMenu("Invalid Option!");
                 break;
         }
     }
@@ -139,14 +175,7 @@ public class Menus {
         System.out.println("|------------------------------------|");
         System.out.println("|           DEV IN GAME              |");
         System.out.println("|------------------------------------|");
-        /*
-        Save save = new Save(LocalDateTime.now(), "Teste 1");
-        Save save1 = new Save(LocalDateTime.now(), "Teste 2");
-        Save save2 = new Save(LocalDateTime.now(), "Teste 3");
-        saveController.createSave(save);
-        saveController.createSave(save1);
-        saveController.createSave(save2);
-         */
+
         saveController.listSave();
         System.out.println("<Your choose is:>");
         int saveListMenuOption = input.nextInt();
@@ -156,7 +185,6 @@ public class Menus {
         }catch (Exception e){
             errorMenu("Invalid Option!");
         }
-
     }
 
     public void extraMenu(){
@@ -213,6 +241,52 @@ public class Menus {
         menusFunction.timer();
     }
 
+    //GAME:
+
+    public void gameLevel(Character character, int startPack){
+
+        Save saveGame = new Save(LocalDateTime.now(), character.getName(), character);
+        saveController.createSave(saveGame);
+
+        Inventory startItem;
+
+        switch (character.getExperience()){
+
+            case 0:
+                if(character.getGameClass() == 1){
+                    startItem = new Inventory(character, 1, "clap", 1, 20);
+                }else{
+                    startItem = new Inventory(character, 2, "book", 1, 20);
+                }
+
+
+                inventoryController.addItem(startItem);
+                menusFunction.space(UP_SPACE);
+                System.out.println("Item: " + startItem.getItemName() + "has been add to your inventory!");
+
+                menusFunction.timer();
+
+                menusFunction.space(UP_SPACE);
+                System.out.println("Welcome to BATALHA FINAL!");
+                System.out.println("Choose your difficult:");
+                System.out.println("1. Easy");
+                System.out.println("2. Medium");
+                System.out.println("3. Hard");
+                System.out.println("<Your option is:>");
+                int optionDifficult = input.nextInt();
+
+                if(optionDifficult == 1){
+                    //Easy mode
+                }else if(optionDifficult == 2){
+                    //Medium mode
+                }else if(optionDifficult == 3){
+                    //Hard mode
+                }else{
+                    errorMenu("Invalid Option!");
+                }
+                break;
+        }
+    }
 
 }
 
